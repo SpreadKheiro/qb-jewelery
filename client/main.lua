@@ -50,10 +50,11 @@ local function IsWearingHandshoes()
 end
 
 local function smashVitrine(k)
-    [[--if not firstAlarm then                                                                  -- Dont call police now because player can cancel animation and not trigger the scoreboard --
-        TriggerServerEvent('police:server:policeAlert', 'Suspicious Activity')                  -- firstAlarm will be used line 80 to fix multiple notification to police --
-        firstAlarm = true
-    end--]]
+
+    --if not firstAlarm then                                                                    -- Dont call police now because player can cancel animation and not trigger the scoreboard --
+        --TriggerServerEvent('police:server:policeAlert', 'Suspicious Activity')                -- firstAlarm will be used line 80 to fix multiple notification to police --
+        --firstAlarm = true
+    --end
 
     QBCore.Functions.TriggerCallback('qb-jewellery:server:getCops', function(cops)
         if cops >= Config.RequiredCops then
@@ -147,11 +148,9 @@ local function Listen4Control(case)
                 if not Config.Locations[case]["isBusy"] and not Config.Locations[case]["isOpened"] then
                     exports['qb-core']:KeyPressed()
                         if validWeapon() and alarmon then                                                           --validWeapon AND alarmon
-                            if alarmon then                                                                         --alarmon
-                                smashVitrine(case)
-                            else
-                                QBCore.Functions.Notify('You have to trigger the alarm by shooting', 'error')       --Notif alarmon is false
-                            end
+                            smashVitrine(case)
+                        elseif not alarmon then
+                            QBCore.Functions.Notify('You have to trigger the alarm by shooting', 'error')
                         else
                             QBCore.Functions.Notify(Lang:t('error.wrong_weapon'), 'error')
                         end
@@ -241,7 +240,7 @@ end)
 
 --Functions
 local listenforalarm = false
-local function Listen4Alarm()                                                                                -- Triggered by PolyZone box Inside ++
+local function Listen4Alarm()                                                                                           -- Triggered by PolyZone box Inside ++
     listenforalarm = true
     CreateThread(function()
         while listenforalarm do
@@ -267,16 +266,14 @@ local function Listen4Shot()
                 listenforshot = false
                 QBCore.Functions.TriggerCallback('qb-jewellery:server:getCops', function(cops)
                     if cops >= Config.RequiredCops then
-                        local currentScoreboard
                         QBCore.Functions.TriggerCallback('qb-scoreboard:server:GetConfig', function(config)
-                            currentScoreboard = config
+                            if not config.jewellery.busy then
+                                TriggerServerEvent('qb-jewellery:server:setAlarm', true)
+                                TriggerServerEvent('police:server:policeAlert', 'Alarm alert')
+                            else
+                                QBCore.Functions.Notify('Robbery on cooldown! Try later.') -- scoreboard said jewelery is unavailable / on cooldown
+                            end
                         end)
-                        if not currentScoreboard.jewellery.busy then
-                            TriggerServerEvent('qb-jewellery:server:setAlarm', true)
-                            TriggerServerEvent('police:server:policeAlert', 'Alarm alert')
-                        else
-                            QBCore.Functions.Notify('You cant rob right now!') -- scoreboard said jewelery is unavailable / on cooldown
-                        end
                     else
                         QBCore.Functions.Notify('There is not enough cops right now!')
                     end
@@ -323,7 +320,7 @@ CreateThread(function() --SHOOT ZONE
             if not alarmon then
                 if not notified then
                     notified = true
-                    QBCore.Functions.Notify('Tir pour essayer de faire un vol')
+                    QBCore.Functions.Notify('Shoot to start robbery')
                 end
                 Listen4Shot()
             end
@@ -333,5 +330,3 @@ CreateThread(function() --SHOOT ZONE
         end
     end)
 end)
-
-
