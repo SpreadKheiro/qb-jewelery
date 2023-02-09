@@ -240,8 +240,8 @@ RegisterNetEvent('qb-jewellery:client:setAlarm', function(alarmstate2)
 end)
 
 --Functions
-local listenforalarm = FemaleNoHandshoes                                                                                -- Triggered by PolyZone box Inside ++
-local function Listen4Alarm()
+local listenforalarm = false
+local function Listen4Alarm()                                                                                -- Triggered by PolyZone box Inside ++
     listenforalarm = true
     CreateThread(function()
         while listenforalarm do
