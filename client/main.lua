@@ -50,12 +50,6 @@ local function IsWearingHandshoes()
 end
 
 local function smashVitrine(k)
-
-    --if not firstAlarm then                                                                    -- Dont call police now because player can cancel animation and not trigger the scoreboard --
-        --TriggerServerEvent('police:server:policeAlert', 'Suspicious Activity')                -- firstAlarm will be used line 80 to fix multiple notification to police --
-        --firstAlarm = true
-    --end
-
     QBCore.Functions.TriggerCallback('qb-jewellery:server:getCops', function(cops)
         if cops >= Config.RequiredCops then
             local animDict = "missheist_jewel"
@@ -111,7 +105,7 @@ end
 -- Events
 local alarmon = false                                                                               --new boolean value for Client Alarm State
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()                                                     
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
 	QBCore.Functions.TriggerCallback('qb-jewellery:server:getVitrineState', function(result)
 		Config.Locations = result
 	end)
