@@ -2,7 +2,7 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local firstAlarm = false
 local smashing = false
 
--- Functions
+-- Functions Kheiro was here
 
 local function loadParticle()
 	if not HasNamedPtfxAssetLoaded("scr_jewelheist") then
